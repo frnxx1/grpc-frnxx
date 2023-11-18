@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package frnxx;
+
+option go_package = "/user_proto";
+
+message User {
+  string phone = 1;
+  string name = 2;
+  string password = 3;
+  string id = 4;
+}
+
+message UserRegisterRequest {
+  User user = 1;
+}
+
+message UserRegisterResponse {
+  User user = 1;
+}
+
+message UserReadRequest {
+  string id = 2;
+} 
+
+message UserReadResponse {
+  User user = 1;
+}
+
+message UserUpdatePhoneRequest {
+  User user = 1;
+}
+
+message UserUpdatePhoneResponse {
+  User user = 1;
+}
+
+message UserUpdateNameRequest {
+  User user = 1;
+ 
+}
+  
+message UserUpdateNameResponse {
+  User user = 1;
+}
+
+service UserGrpc {
+  rpc UserRegister(UserRegisterRequest) returns (UserRegisterResponse);
+  rpc UserRead(UserReadRequest) returns (UserReadResponse);
+  rpc UserUpdatePhone(UserUpdatePhoneRequest) returns (UserUpdatePhoneResponse);
+  rpc UserUpdateName(UserUpdateNameRequest) returns (UserUpdateNameResponse);
+}
+
+
