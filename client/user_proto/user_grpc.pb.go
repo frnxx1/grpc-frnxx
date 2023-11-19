@@ -19,10 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserGrpc_UserRegister_FullMethodName    = "/frnxx.UserGrpc/UserRegister"
-	UserGrpc_UserRead_FullMethodName        = "/frnxx.UserGrpc/UserRead"
-	UserGrpc_UserUpdatePhone_FullMethodName = "/frnxx.UserGrpc/UserUpdatePhone"
-	UserGrpc_UserUpdateName_FullMethodName  = "/frnxx.UserGrpc/UserUpdateName"
+	UserGrpc_UserRegister_FullMethodName = "/frnxx.UserGrpc/UserRegister"
+	UserGrpc_UserRead_FullMethodName     = "/frnxx.UserGrpc/UserRead"
+	UserGrpc_UserUpdate_FullMethodName   = "/frnxx.UserGrpc/UserUpdate"
 )
 
 // UserGrpcClient is the client API for UserGrpc service.
@@ -31,8 +30,7 @@ const (
 type UserGrpcClient interface {
 	UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 	UserRead(ctx context.Context, in *UserReadRequest, opts ...grpc.CallOption) (*UserReadResponse, error)
-	UserUpdatePhone(ctx context.Context, in *UserUpdatePhoneRequest, opts ...grpc.CallOption) (*UserUpdatePhoneResponse, error)
-	UserUpdateName(ctx context.Context, in *UserUpdateNameRequest, opts ...grpc.CallOption) (*UserUpdateNameResponse, error)
+	UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error)
 }
 
 type userGrpcClient struct {
@@ -61,18 +59,9 @@ func (c *userGrpcClient) UserRead(ctx context.Context, in *UserReadRequest, opts
 	return out, nil
 }
 
-func (c *userGrpcClient) UserUpdatePhone(ctx context.Context, in *UserUpdatePhoneRequest, opts ...grpc.CallOption) (*UserUpdatePhoneResponse, error) {
-	out := new(UserUpdatePhoneResponse)
-	err := c.cc.Invoke(ctx, UserGrpc_UserUpdatePhone_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userGrpcClient) UserUpdateName(ctx context.Context, in *UserUpdateNameRequest, opts ...grpc.CallOption) (*UserUpdateNameResponse, error) {
-	out := new(UserUpdateNameResponse)
-	err := c.cc.Invoke(ctx, UserGrpc_UserUpdateName_FullMethodName, in, out, opts...)
+func (c *userGrpcClient) UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error) {
+	out := new(UserUpdateResponse)
+	err := c.cc.Invoke(ctx, UserGrpc_UserUpdate_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +74,7 @@ func (c *userGrpcClient) UserUpdateName(ctx context.Context, in *UserUpdateNameR
 type UserGrpcServer interface {
 	UserRegister(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
 	UserRead(context.Context, *UserReadRequest) (*UserReadResponse, error)
-	UserUpdatePhone(context.Context, *UserUpdatePhoneRequest) (*UserUpdatePhoneResponse, error)
-	UserUpdateName(context.Context, *UserUpdateNameRequest) (*UserUpdateNameResponse, error)
+	UserUpdate(context.Context, *UserUpdateRequest) (*UserUpdateResponse, error)
 	mustEmbedUnimplementedUserGrpcServer()
 }
 
@@ -100,11 +88,8 @@ func (UnimplementedUserGrpcServer) UserRegister(context.Context, *UserRegisterRe
 func (UnimplementedUserGrpcServer) UserRead(context.Context, *UserReadRequest) (*UserReadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserRead not implemented")
 }
-func (UnimplementedUserGrpcServer) UserUpdatePhone(context.Context, *UserUpdatePhoneRequest) (*UserUpdatePhoneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserUpdatePhone not implemented")
-}
-func (UnimplementedUserGrpcServer) UserUpdateName(context.Context, *UserUpdateNameRequest) (*UserUpdateNameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserUpdateName not implemented")
+func (UnimplementedUserGrpcServer) UserUpdate(context.Context, *UserUpdateRequest) (*UserUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserUpdate not implemented")
 }
 func (UnimplementedUserGrpcServer) mustEmbedUnimplementedUserGrpcServer() {}
 
@@ -155,38 +140,20 @@ func _UserGrpc_UserRead_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserGrpc_UserUpdatePhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserUpdatePhoneRequest)
+func _UserGrpc_UserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserGrpcServer).UserUpdatePhone(ctx, in)
+		return srv.(UserGrpcServer).UserUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserGrpc_UserUpdatePhone_FullMethodName,
+		FullMethod: UserGrpc_UserUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserGrpcServer).UserUpdatePhone(ctx, req.(*UserUpdatePhoneRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserGrpc_UserUpdateName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserUpdateNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserGrpcServer).UserUpdateName(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserGrpc_UserUpdateName_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserGrpcServer).UserUpdateName(ctx, req.(*UserUpdateNameRequest))
+		return srv.(UserGrpcServer).UserUpdate(ctx, req.(*UserUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -207,12 +174,8 @@ var UserGrpc_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserGrpc_UserRead_Handler,
 		},
 		{
-			MethodName: "UserUpdatePhone",
-			Handler:    _UserGrpc_UserUpdatePhone_Handler,
-		},
-		{
-			MethodName: "UserUpdateName",
-			Handler:    _UserGrpc_UserUpdateName_Handler,
+			MethodName: "UserUpdate",
+			Handler:    _UserGrpc_UserUpdate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

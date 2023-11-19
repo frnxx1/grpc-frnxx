@@ -27,28 +27,20 @@ message UserReadResponse {
   User user = 1;
 }
 
-message UserUpdatePhoneRequest {
+message UserUpdateRequest {
   User user = 1;
 }
 
-message UserUpdatePhoneResponse {
+message UserUpdateResponse {
   User user = 1;
 }
 
-message UserUpdateNameRequest {
-  User user = 1;
- 
-}
-  
-message UserUpdateNameResponse {
-  User user = 1;
-}
+
 
 service UserGrpc {
   rpc UserRegister(UserRegisterRequest) returns (UserRegisterResponse);
   rpc UserRead(UserReadRequest) returns (UserReadResponse);
-  rpc UserUpdatePhone(UserUpdatePhoneRequest) returns (UserUpdatePhoneResponse);
-  rpc UserUpdateName(UserUpdateNameRequest) returns (UserUpdateNameResponse);
+  rpc UserUpdate(UserUpdateRequest) returns (UserUpdateResponse);
 }
 
 

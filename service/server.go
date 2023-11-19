@@ -32,29 +32,51 @@ func (*server) UserRegister(ctx context.Context, rec *pb.UserRegisterRequest) (*
 	}
 	return &pb.UserRegisterResponse{
 		User: &pb.User{
+			Id:       user.GetId(),
 			Name:     user.GetName(),
 			Phone:    user.GetPhone(),
 			Password: user.GetPassword(),
-			Id:       user.GetId(),
 		},
 	}, nil
 
 }
 
-func (*server) UserRead(ctx context.Context,req *pb.UserReadRequest) (*pb.UserReadResponse,error){
+func (*server) UserRead(ctx context.Context, req *pb.UserReadRequest) (*pb.UserReadResponse, error) {
 	fmt.Println("Reading...")
 	var user st.User
-	
-	res := st.DB.Find(&user,"id=?",req.GetId())
+
+	res := st.DB.Find(&user, "id=?", req.GetId())
 	if res.RowsAffected == 0 {
 		return nil, errors.New("user read unsuccessful")
 	}
 	return &pb.UserReadResponse{
 		User: &pb.User{
-			Name: user.Name,
+			Id:       user.ID,
+			Name:     user.Name,
+			Phone:    user.Phone,
 			Password: user.Password,
-			Phone: user.Phone,
-			Id: user.ID,
 		},
-	},nil
+	}, nil
 }
+
+func (*server) UserUpdate(ctx context.Context, req *pb.UserUpdateRequest) (*pb.UserUpdateResponse, error) {
+	fmt.Println("Updating phone...")
+	var user st.User
+
+	res := st.DB.Model(&user).Where("id = ?", req.GetUser().Id).Updates(st.User{Phone: req.User.Phone, Password: req.User.Password,Name: req.User.Name})
+	if res.RowsAffected == 0 {
+		return nil, errors.New("user update unsuccessful")
+	}
+
+	return &pb.UserUpdateResponse{
+		User: &pb.User{
+			Id:       user.ID,
+			Name:     user.Name,
+			Phone:    user.Phone,
+			Password: user.Password,
+		},
+	}, nil
+}
+
+
+

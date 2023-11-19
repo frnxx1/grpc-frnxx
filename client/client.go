@@ -1,11 +1,11 @@
 package main
 
-
 import (
 	"context"
+	"flag"
+	"fmt"
 	pb "frnxx/client/user_proto"
 	st "frnxx/service/storage"
-	"flag"
 	"log"
 	"net/http"
 	"time"
@@ -36,7 +36,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
-	
+
 	gin.SetMode(gin.ReleaseMode)
 	r := GetRouter()
 
@@ -44,45 +44,76 @@ func main() {
 		var user st.User
 		err := ct.ShouldBind(&user)
 		if err != nil {
-			ct.JSON(http.StatusBadRequest,gin.H{
+			ct.JSON(http.StatusBadRequest, gin.H{
 				"error": err,
 			})
 			return
 		}
 
 		userData := &pb.User{
-			Name: user.Name,
+			Name:     user.Name,
+			Phone:    user.Phone,
 			Password: user.Password,
-			Phone: user.Phone,
 		}
-		res,err := c.UserRegister(ctx,&pb.UserRegisterRequest{User: userData})
+		res, err := c.UserRegister(ctx, &pb.UserRegisterRequest{User: userData})
 
 		if err != nil {
-			ct.JSON(http.StatusBadRequest,gin.H{
+			ct.JSON(http.StatusBadRequest, gin.H{
 				"error": err,
 			})
 			return
 		}
 
-		ct.JSON(http.StatusOK,gin.H{
-			"User":res.User,
+		ct.JSON(http.StatusOK, gin.H{
+			"User": res.User,
 		})
 
 	})
 
-	r.GET("/User/:id",func(ct *gin.Context) {
+	r.GET("/User/:id", func(ct *gin.Context) {
 		id := ct.Param("id")
 
-		res,err := c.UserRead(ctx,&pb.UserReadRequest{Id: id })
+		res, err := c.UserRead(ctx, &pb.UserReadRequest{Id: id})
 		if err != nil {
-			ct.JSON(http.StatusBadRequest,gin.H{
+			ct.JSON(http.StatusBadRequest, gin.H{
 				"error": err,
 			})
 			return
 		}
-		ct.JSON(http.StatusOK,gin.H{
-			"User":res.User,
+		ct.JSON(http.StatusOK, gin.H{
+			"User": res.User,
 		})
+	})
+
+	r.PUT("/User/:id", func(ctx *gin.Context) {
+		var user st.User
+		err := ctx.ShouldBind(&user)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error1": err,
+			})
+			return
+		}
+
+		res, err := c.UserUpdate(ctx, &pb.UserUpdateRequest{
+			User: &pb.User{
+				Id:       user.ID,
+				Name:     user.Name,
+				Phone:    user.Phone,
+				Password: user.Password,
+			},
+		})
+		if err != nil {
+			fmt.Println(err)
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error2": err,
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"Update": res.User,
+		})
+
 	})
 
 	r.Run("localhost:8080")
